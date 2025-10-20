@@ -1,5 +1,3 @@
 # Toisen jakson backend-tehtävät - Suvi Mynttinen
 
-main-haara init-versio.
-
-Perusrunko node.js-sovellukselle.
+Ensimmäisen ucad-tehtävän alku
