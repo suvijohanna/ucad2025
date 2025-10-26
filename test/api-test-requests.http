@@ -29,3 +29,6 @@ content-type: application/json
 
 ### Delete item
 DELETE http://localhost:3000/items/2
+
+### Get number of items
+GET http://localhost:3000/stats
