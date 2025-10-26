@@ -39,3 +39,6 @@ DELETE http://localhost:3000/items/2
 ### Get number of items
 
 GET http://localhost:3000/stats
+
+
+<img width="1327" height="948" alt="t1" src="https://github.com/user-attachments/assets/d126e76c-17b9-4f25-8b08-cf29b2cf1a42" />
