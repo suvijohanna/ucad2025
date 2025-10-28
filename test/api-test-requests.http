@@ -3,32 +3,69 @@
 ### Get server root
 GET http://localhost:3000/
 
-## /items mock data
 
-### GET /items
-GET http://localhost:3000/items
+## /media resource
 
-### GET /items/:id
-GET http://localhost:3000/items/2
+### GET all media items
+GET http://localhost:3000/api/media
 
-### Add new item
-POST http://localhost:3000/items
+### GET media item by id
+GET http://localhost:3000/api/media/9590
+
+### Add new media item
+POST http://localhost:3000/api/media
 content-type: application/json
 
 {
-  "name": "New Item"
+  "filename": "kuva.jpg",
+  "title": "New image",
+  "description": "The description of the new image",
+  "user_id": 305,
+  "media_type": "image/jpeg"
 }
 
-### Update existing item
-PUT http://localhost:3000/items/2
+### Update existing media item
+PUT http://localhost:3000/api/media/9590
 content-type: application/json
 
 {
-  "name": "New Item Name"
+  "title": "New title",
+  "description": "Some new description",
 }
 
-### Delete item
-DELETE http://localhost:3000/items/2
+### Delete media item
+DELETE http://localhost:3000/api/media/9590
 
-### Get number of items
-GET http://localhost:3000/stats
+#####################
+
+## /users resource
+
+### GET /users
+GET http://localhost:3000/api/user
+
+### GET user by id
+GET http://localhost:3000/api/users/2
+
+### Add new user
+POST http://localhost:3000/api/user
+content-type: application/json
+
+{
+  "user_id": "305",
+  "username": "New user",
+  "password": "*******",
+  "email": "email@example.com",
+  "user_level_id": "1",
+  "created_at": "2021-12-11T06:00:41.000Z",
+}
+
+### Update existing user
+PUT http://localhost:3000/api/users/2
+content-type: application/json
+
+{
+  "name": "New Username"
+}
+
+### Delete user
+DELETE http://localhost:3000/api/users/3
