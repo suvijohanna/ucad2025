@@ -1,0 +1,34 @@
+# UCAD example API test http requests
+
+### Get server root
+GET http://localhost:3000/
+
+## /items mock data
+
+### GET /items
+GET http://localhost:3000/items
+
+### GET /items/:id
+GET http://localhost:3000/items/2
+
+### Add new item
+POST http://localhost:3000/items
+content-type: application/json
+
+{
+  "name": "New Item"
+}
+
+### Update existing item
+PUT http://localhost:3000/items/2
+content-type: application/json
+
+{
+  "name": "New Item Name"
+}
+
+### Delete item
+DELETE http://localhost:3000/items/2
+
+### Get number of items
+GET http://localhost:3000/stats
