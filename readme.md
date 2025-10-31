@@ -19,3 +19,8 @@ Toteutettu backend Node.js/Expressillä, joka tarjoaa media- ja käyttäjätieto
 - POST `/api/user` – lisää käyttäjä
 - PUT `/api/user/:id` – päivitä käyttäjä
 - DELETE `/api/user/:id` – poista käyttäjä
+
+<img width="1919" height="960" alt="image" src="https://github.com/user-attachments/assets/33b08718-5113-40a6-a47f-53fa2fa319fd" />
+<img width="1479" height="942" alt="image" src="https://github.com/user-attachments/assets/164c895f-2e59-4c15-8056-1a202cd78227" />
+
+
