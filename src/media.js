@@ -52,23 +52,41 @@ const mediaItems = [
   },
 ];
 
+/**
+ * Return all media items from the mock data
+ *
+ * @param {Object} req - HTTP request
+ * @param {Object} res - HTTP response
+ * @returns {void}
+ */
 const getAllMedia = (req, res) => {
   res.json(mediaItems);
 };
 
+/**
+ * Return media item from the mock data based on value on media_id
+ *
+ * @param {Object} req - HTTP request
+ * @param {Object} res - HTTP response
+ * @returns {void}
+ */
 const getMediaById = (req, res) => {
-  // console.log('req id', req.params.id);
   const item = mediaItems.find(
     (item) => item.media_id === parseInt(req.params.id),
   );
-  // console.log('item found:', item);
   if (item) {
     res.json(item);
   } else {
-    res.Status(404).json({message: 'media not found'});
+    res.status(404).json({message: 'media not found'});
   }
 };
 
+/**
+ * Adds a new media item to the mock data
+ *
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
 const postNewMedia = (req, res) => {
   const data = req.body;
   data.media_id = mediaItems[mediaItems.length - 1].media_id + 1;
@@ -77,10 +95,29 @@ const postNewMedia = (req, res) => {
 };
 
 /**
+ * Modifies media item in the mock data based on value on media_id
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const updateMediaById = (req, res) => {
+  const itemIndex = mediaItems.findIndex(
+    (item) => item.media_id === parseInt(req.params.id),
+  );
+  if (itemIndex != -1) {
+    mediaItems[itemIndex] = {...mediaItems[itemIndex], ...req.body};
+    res
+      .status(200)
+      .json({message: 'item updated', item: mediaItems[itemIndex]});
+  } else {
+    res.status(404).json({message: 'media item not found'});
+  }
+};
+
+/**
  * Deletes media item from the mock data based on value on media_id
  *
- * @param {Object} req http request
- * @param {Object} res http response
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
  */
 const deleteMediaById = (req, res) => {
   const itemToDelete = mediaItems.find(
@@ -90,8 +127,15 @@ const deleteMediaById = (req, res) => {
     mediaItems.splice(itemToDelete, 1);
     res.status(200).json({message: 'item deleted'});
   } else {
-    res.Status(404).json({message: 'media item not found'});
+    res.status(404).json({message: 'media item not found'});
   }
 };
 
-export {getAllMedia, getMediaById, postNewMedia, deleteMediaById};
+export {
+  mediaItems,
+  getAllMedia,
+  getMediaById,
+  postNewMedia,
+  updateMediaById,
+  deleteMediaById,
+};

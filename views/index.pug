@@ -7,9 +7,10 @@ html(lang='fi')
     title= title
   body
     h1= title
-    main
-        p= text
-        ul
-            each item in items
-                li= item.name
-
+    p= text
+    ul
+      each item in items
+        li
+          h2= item.title
+          img(src=item.url, alt=item.title, width="150")
+          p= item.description
