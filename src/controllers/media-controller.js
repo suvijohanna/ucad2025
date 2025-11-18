@@ -1,56 +1,4 @@
-// Mock data
-const mediaItems = [
-  {
-    media_id: 9632,
-    filename: 'ffd8.jpg',
-    filesize: 887574,
-    title: 'Favorite drink',
-    description: '',
-    user_id: 1606,
-    media_type: 'image/jpeg',
-    created_at: '2023-10-16T19:00:09.000Z',
-  },
-  {
-    media_id: 9626,
-    filename: 'dbbd.jpg',
-    filesize: 60703,
-    title: 'Miika',
-    description: 'My Photo',
-    user_id: 3671,
-    media_type: 'image/jpeg',
-    created_at: '2023-10-13T12:14:26.000Z',
-  },
-  {
-    media_id: 9625,
-    filename: '2f9b.jpg',
-    filesize: 30635,
-    title: 'Aksux',
-    description: 'friends',
-    user_id: 260,
-    media_type: 'image/jpeg',
-    created_at: '2023-10-12T20:03:08.000Z',
-  },
-  {
-    media_id: 9592,
-    filename: 'f504.jpg',
-    filesize: 48975,
-    title: 'Desert',
-    description: '',
-    user_id: 3609,
-    media_type: 'image/jpeg',
-    created_at: '2023-10-12T06:59:05.000Z',
-  },
-  {
-    media_id: 9590,
-    filename: '60ac.jpg',
-    filesize: 23829,
-    title: 'Basement',
-    description: 'Light setup in basement',
-    user_id: 305,
-    media_type: 'image/jpeg',
-    created_at: '2023-10-12T06:56:41.000Z',
-  },
-];
+import {addMedia, findMediaById, listAllMedia} from '../models/media-model.js';
 
 /**
  * Return all media items from the mock data
@@ -59,8 +7,8 @@ const mediaItems = [
  * @param {Object} res - HTTP response
  * @returns {void}
  */
-const getAllMedia = (req, res) => {
-  res.json(mediaItems);
+const getMedia = async (req, res) => {
+  res.json(await listAllMedia());
 };
 
 /**
@@ -70,14 +18,21 @@ const getAllMedia = (req, res) => {
  * @param {Object} res - HTTP response
  * @returns {void}
  */
-const getMediaById = (req, res) => {
-  const item = mediaItems.find(
-    (item) => item.media_id === parseInt(req.params.id),
-  );
-  if (item) {
-    res.json(item);
+const getMediaById = async (req, res) => {
+  const media = await findMediaById(req.params.id);
+  if (media) {
+    console.log(process.env.HOST);
+    media.filepath = process.env.UPLOADS_PATH + media.filename;
+    res.json(media);
   } else {
-    res.status(404).json({message: 'media not found'});
+    res.sendStatus(404);
+  }
+};
+
+const getMediaByUser = async (req, res) => {
+  const media = await findMediaByUserId(req.user.user_id);
+  if (media) {
+    res.json(media);
   }
 };
 
@@ -87,11 +42,27 @@ const getMediaById = (req, res) => {
  * @param {Object} req HTTP request
  * @param {Object} res HTTP response
  */
-const postNewMedia = (req, res) => {
-  const data = req.body;
-  data.media_id = mediaItems[mediaItems.length - 1].media_id + 1;
-  mediaItems.push(data);
-  res.status(201).json({message: 'new item created', item: data});
+const postMedia = async (req, res) => {
+  let {title, description} = req.body;
+  const user_id = req.user.user_id;
+  // replace undefined description with empty string
+  description = description ? description : '';
+  console.log('req file by multer', req.file);
+  const {filename, size, mimetype} = req.file;
+  if (filename && title && user_id) {
+    const result = await addMedia({
+      user_id,
+      filename,
+      size,
+      mimetype,
+      title,
+      description,
+    });
+    res.status(201);
+    res.json({message: 'New media item added.', ...result});
+  } else {
+    res.sendStatus(400);
+  }
 };
 
 /**
@@ -132,10 +103,10 @@ const deleteMediaById = (req, res) => {
 };
 
 export {
-  mediaItems,
-  getAllMedia,
+  getMedia,
   getMediaById,
-  postNewMedia,
+  getMediaByUser,
+  postMedia,
   updateMediaById,
   deleteMediaById,
 };

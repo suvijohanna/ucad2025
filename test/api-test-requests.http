@@ -1,5 +1,7 @@
 # UCAD example API test http requests
 
+@token = {{token}}
+
 ### Get server root
 GET http://localhost:3000/
 
@@ -11,6 +13,10 @@ GET http://localhost:3000/api/media
 
 ### GET media item by id
 GET http://localhost:3000/api/media/9590
+
+### GET media items by user (logged in)
+GET http://localhost:3000/api/media/user/
+Authorization: Bearer {{token}}
 
 ### Add new media item
 POST http://localhost:3000/api/media
@@ -24,6 +30,26 @@ content-type: application/json
   "media_type": "image/jpeg"
 }
 
+### Add new media item including media file
+POST http://localhost:3000/api/media
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="title"
+
+New cat image
+------Boundary
+Content-Disposition: form-data; name="user_id"
+
+21
+------Boundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./test-cat.png
+------Boundary--
+
 ### Update existing media item
 PUT http://localhost:3000/api/media/9590
 content-type: application/json
@@ -35,6 +61,10 @@ content-type: application/json
 
 ### Delete media item
 DELETE http://localhost:3000/api/media/9590
+
+### Delete your own media item
+DELETE http://localhost:3000/api/media/2
+Authorization: Bearer {{token}}
 
 #####################
 
@@ -51,12 +81,23 @@ POST http://localhost:3000/api/user
 content-type: application/json
 
 {
-  "user_id": "305",
-  "username": "New user",
-  "password": "*******",
-  "email": "email@example.com",
-  "user_level_id": "1"
+  "username": "suvi",
+  "password": "kalakana",
+  "email": "email@example.com"
 }
+
+### Login
+POST http://localhost:3000/api/auth/login
+content-type: application/json
+
+{
+  "username": "suvi",
+  "password": "kalakana"
+}
+
+### Auth GET me
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer {{token}}
 
 ### Update existing user
 PUT http://localhost:3000/api/user/305

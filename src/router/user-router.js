@@ -5,9 +5,11 @@ import {
   getUserById,
   postNewUser,
   updateUserById,
-} from '../users';
+} from '../users.js';
+import {postUser} from '../controllers/user-controller.js';
 
 const userRouter = express.Router();
+userRouter.route('/login').post(postUser);
 
 // Users endpoints
 
