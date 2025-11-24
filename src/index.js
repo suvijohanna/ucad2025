@@ -4,6 +4,7 @@ import mediaRouter from './router/media-router.js';
 import authRouter from './router/auth-router.js';
 // read .env file
 import 'dotenv/config';
+import {notFoundHandler, errorHandler} from './middlewares/error-handlers.js';
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
@@ -22,6 +23,9 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/media', mediaRouter);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+
+// Not found handler
+app.use(notFoundHandler);
 
 // Start server
 app.listen(port, hostname, () => {
