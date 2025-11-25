@@ -1,0 +1,15 @@
+{
+  "name": "apidoc-example",
+  "version": "1.0.0",
+  "description": "Media API example",
+  "title": "Media API example",
+  "url" : "https://api.example.com/api",
+  "order": [
+    "GetUser",
+    "PostUser"
+  ],
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  }
+}

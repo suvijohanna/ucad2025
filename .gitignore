@@ -1,6 +1,10 @@
 .vscode
 node_modules
 .DS_Store
+
 uploads/*
 !uploads/.gitkeep
+
 .env
+
+/docs
