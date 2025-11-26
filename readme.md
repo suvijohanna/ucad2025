@@ -36,3 +36,9 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 - GET `/api/likes/user/:id` – listaa käyttäjän tykkäykset
 - POST `/api/likes` – lisää uusi tykkäys (user_id + media_id)
 - DELETE `/api/likes/:id` – poistaa tykkäyksen
+
+<img width="1648" height="935" alt="image" src="https://github.com/user-attachments/assets/f758c335-c08f-4684-9869-b4dd1780a17c" />
+
+<img width="1647" height="946" alt="image" src="https://github.com/user-attachments/assets/f5d37414-e120-4a49-b477-d59bbb8493f5" />
+
+
