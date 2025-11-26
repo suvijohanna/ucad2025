@@ -5,21 +5,27 @@ import {
   getUserById,
   postNewUser,
   updateUserById,
-} from '../users.js';
-import {postUser} from '../controllers/user-controller.js';
+} from '../controllers/user-controller.js';
 
 const userRouter = express.Router();
 userRouter.route('/login').post(postUser);
 
 // Users endpoints
 
-// Get all users
-userRouter.route('/').get(getAllUsers).post(postNewUser);
-// Get user by id
+userRouter
+  .route('/')
+  // Get all users
+  .get(getAllUsers)
+  // Create new user
+  .post(postNewUser);
+
 userRouter
   .route('/:id')
+  // Get user by ID
   .get(getUserById)
+  // Update user by user ID
   .put(updateUserById)
+  // Delete user by user ID
   .delete(deleteUserById);
 
 export default userRouter;
