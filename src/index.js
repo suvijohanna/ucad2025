@@ -18,7 +18,7 @@ app.use('/api/media', mediaRouter);
 
 app.use('/api/user', userRouter);
 
-app.use('/api/like', likeRouter);
+app.use('/api/likes', likeRouter);
 
 // Start server
 app.listen(port, hostname, () => {
