@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import {
   deleteMediaById,
   getAllMedia,
@@ -9,14 +10,22 @@ import {
 
 // ALL media endpoints handled with express router
 const mediaRouter = express.Router();
+const upload = multer({dest: process.env.UPLOADS_PATH});
 
-// Get all media and post new media
-mediaRouter.route('/').get(getAllMedia).post(postNewMedia);
-// Delete, get and update media by id
+mediaRouter
+  .route('/')
+  // Get all media items
+  .get(getAllMedia)
+  // Add new media item
+  .post(upload.single('file'), postNewMedia);
+
 mediaRouter
   .route('/:id')
+  // Get media item by id
   .get(getMediaById)
+  // Update media item
   .put(updateMediaById)
+  // Delete media item
   .delete(deleteMediaById);
 
 export default mediaRouter;

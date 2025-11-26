@@ -24,6 +24,25 @@ content-type: application/json
   "media_type": "image/jpeg"
 }
 
+### Add new media item including media file
+POST http://localhost:3000/api/media
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="title"
+
+New cat image
+------Boundary
+Content-Disposition: form-data; name="user_id"
+
+2
+------Boundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./test-cat.png
+------Boundary--
+
 ### Update existing media item
 PUT http://localhost:3000/api/media/9590
 content-type: application/json
