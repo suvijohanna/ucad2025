@@ -1,6 +1,16 @@
 # Back-end 2: Express-sovelluskehys - Suvi Mynttinen
 
-Toteutettu backend Node.js/Expressillä, joka tarjoaa media- ja käyttäjätietoja mock-datan avulla. Käytössä staattiset mediatiedostot ja dynaaminen HTML-sivu Pugilla.
+Toteutettu backend Node.js/Expressillä, MVC-mallia ja MySQL-tietokantaa käyttäen. Sovellus tarjoaa media- ja käyttäjätietoja, tiedostojen latauksen ja tykkäys-toiminnallisuuden.
+
+Käytetty: Node.js, Express, MySQL (mysql2), Multer, REST API ja VSCode REST Client.
+
+## Database
+
+Käytössä MySQL-tietokanta: MediaSharingApp
+
+Taulut: Users, MediaItems, Comments, Likes, Ratings, Tags, MediaItemTags, UserLevels
+
+Yhteys database.js-tiedoston kautta (mysql2/promise)
 
 ## API endpoints
 
@@ -19,3 +29,10 @@ Toteutettu backend Node.js/Expressillä, joka tarjoaa media- ja käyttäjätieto
 - POST `/api/user` – lisää käyttäjä
 - PUT `/api/user/:id` – päivitä käyttäjä
 - DELETE `/api/user/:id` – poista käyttäjä
+
+### Likes
+
+- GET `/api/likes/media/:id` – listaa tykkäykset tietylle media-itemille
+- GET `/api/likes/user/:id` – listaa käyttäjän tykkäykset
+- POST `/api/likes` – lisää uusi tykkäys (user_id + media_id)
+- DELETE `/api/likes/:id` – poistaa tykkäyksen
