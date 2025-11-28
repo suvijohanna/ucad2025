@@ -1,6 +1,7 @@
 # UCAD example API test http requests
 
-@token = {{token}}
+### Variables
+@token = eyJ1c2VyX2lkIjozMDgsInVzZXJuYW1lIjoic3V2aSIsInVzZXJfbGV2ZWxfaWQiOjEsImlhdCI6MTc2NDMzNjQ2NCwiZXhwIjoxNzY0NDIyODY0fQ
 
 ### Get server root
 GET http://localhost:3000/
@@ -82,7 +83,7 @@ content-type: application/json
 {
   "username": "suvi",
   "password": "kalakana",
-  "email": "email@example.com"
+  "email": "suvi1@example.com"
 }
 
 ### Login
