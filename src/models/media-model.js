@@ -11,6 +11,20 @@ const listAllMedia = async () => {
   }
 };
 
+const findMediaByUserId = async (userId) => {
+  try {
+    const [rows] = await promisePool.execute(
+      'SELECT * FROM MediaItems WHERE user_id = ?',
+      [userId],
+    );
+    console.log('rows', rows);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
 const findMediaById = async (id) => {
   try {
     const [rows] = await promisePool.execute(
@@ -39,27 +53,47 @@ const addMedia = async (media) => {
   }
 };
 
-const updateMedia = async (id, media) => {
-  const {title, description} = media;
-  const sql = `UPDATE mediaItems, SET title = ?, description = ?`;
+const updateMedia = async (mediaId, data, userId, isAdmin = false) => {
   try {
-    const [result] = await promisePool.execute(sql, [title, description, id]);
+    let sql, params;
+    if (isAdmin) {
+      sql =
+        'UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ?';
+      params = [data.title, data.description, mediaId];
+    } else {
+      sql =
+        'UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ? AND user_id = ?';
+      params = [data.title, data.description, mediaId, userId];
+    }
+    const [result] = await promisePool.query(sql, params);
     return result.affectedRows > 0;
-  } catch (e) {
-    console.error('error', e.message);
-    return {error: e.message};
+  } catch (error) {
+    return {error};
   }
 };
 
-const deleteMedia = async (id) => {
-  const sql = `DELETE FROM mediaItems WHERE media_id = ?`;
+const deleteMedia = async (mediaId, userId, isAdmin = false) => {
   try {
-    const [result] = await promisePool.execute(sql, [id]);
+    let sql, params;
+    if (isAdmin) {
+      sql = 'DELETE FROM MediaItems WHERE media_id = ?';
+      params = [mediaId];
+    } else {
+      sql = 'DELETE FROM MediaItems WHERE media_id = ? AND user_id = ?';
+      params = [mediaId, userId];
+    }
+    const [result] = await promisePool.query(sql, params);
     return result.affectedRows > 0;
-  } catch (e) {
-    console.error('error', e.message);
-    return {error: e.message};
+  } catch (error) {
+    return {error};
   }
 };
 
-export {listAllMedia, findMediaById, addMedia, updateMedia, deleteMedia};
+export {
+  listAllMedia,
+  findMediaById,
+  findMediaByUserId,
+  addMedia,
+  updateMedia,
+  deleteMedia,
+};

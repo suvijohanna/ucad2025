@@ -8,7 +8,7 @@ import {
 } from '../controllers/user-controller.js';
 
 const userRouter = express.Router();
-userRouter.route('/login').post(postUser);
+userRouter.route('/login').post(postNewUser);
 
 // Users endpoints
 

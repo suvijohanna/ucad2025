@@ -5,7 +5,13 @@ import {
   deleteLike,
 } from '../models/like-model.js';
 
-// GET /api/likes/media/:id
+/**
+ * Get all likes for a specific media item.
+ *
+ * @param {Object} req - HTTP request, expects `req.params.id` as media_id
+ * @param {Object} res - HTTP response
+ * @returns {void} Sends JSON array of likes or 500 on database error
+ */
 const getMediaLikes = async (req, res) => {
   try {
     const likes = await getLikesByMediaId(req.params.id);
@@ -15,7 +21,13 @@ const getMediaLikes = async (req, res) => {
   }
 };
 
-// GET /api/likes/user/:id
+/**
+ * Get all likes by a specific user.
+ *
+ * @param {Object} req - HTTP request, expects `req.params.id` as user_id
+ * @param {Object} res - HTTP response
+ * @returns {void} Sends JSON array of likes or 500 on database error
+ */
 const getUserLikes = async (req, res) => {
   try {
     const likes = await getLikesByUserId(req.params.id);
@@ -25,7 +37,13 @@ const getUserLikes = async (req, res) => {
   }
 };
 
-// POST /api/likes
+/**
+ * Add a new like for a media item by a user.
+ *
+ * @param {Object} req - HTTP request, expects `req.body.user_id` and `req.body.media_id`
+ * @param {Object} res - HTTP response
+ * @returns {void} Sends JSON with the created like or 400 if missing data, 500 on error
+ */
 const postLike = async (req, res) => {
   try {
     const {user_id, media_id} = req.body;
@@ -39,7 +57,13 @@ const postLike = async (req, res) => {
   }
 };
 
-// DELETE /api/likes/:id
+/**
+ * Delete a like by its ID.
+ *
+ * @param {Object} req - HTTP request, expects `req.params.id` as like_id
+ * @param {Object} res - HTTP response
+ * @returns {void} Sends JSON confirmation or 404 if not found, 500 on database error
+ */
 const deleteLikeById = async (req, res) => {
   try {
     const success = await deleteLike(req.params.id);
