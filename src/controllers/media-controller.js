@@ -31,17 +31,11 @@ const getAllMedia = async (req, res) => {
  * @param {Object} res - HTTP response object.
  * @returns {void} Sends JSON object of the media item or 404 if not found.
  */
-const getMediaById = async (req, res) => {
-  try {
-    const media = await findMediaById(req.params.id);
-    if (!media) return res.status(404).json({message: 'Media item not found'});
-
-    media.filepath = `${req.protocol}://${req.headers.host}/${process.env.UPLOADS_PATH}/${media.filename}`;
 const getMediaById = async (req, res, next) => {
   const media = await findMediaById(req.params.id);
   if (media) {
     // add full filepath to media item
-    media.filepath = process.env.UPLOADS_PATH + media.filename;
+    media.filepath = `${req.protocol}://${req.headers.host}/${process.env.UPLOADS_PATH}/${media.filename}`;
     res.json(media);
   } else {
     const error = new Error('Media item not found');
