@@ -1,6 +1,7 @@
 import express from 'express';
 import userRouter from './router/user-router.js';
 import mediaRouter from './router/media-router.js';
+import likeRouter from './router/like-router.js';
 import authRouter from './router/auth-router.js';
 // read .env file
 import 'dotenv/config';
@@ -21,13 +22,13 @@ app.use('/uploads', express.static('uploads'));
 
 // Api endpoints
 app.use('/api/media', mediaRouter);
-app.use('/api/users', userRouter);
+app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/likes', likeRouter);
 
 // Not found handler
 app.use(notFoundHandler);
 
-// Start server
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });

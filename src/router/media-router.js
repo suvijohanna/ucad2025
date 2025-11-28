@@ -1,11 +1,11 @@
 import express from 'express';
 import {
-  deleteMediaById,
-  postMedia,
+  getAllMedia,
   getMediaById,
-  updateMediaById,
-  getMedia,
   getMediaByUser,
+  postNewMedia,
+  updateMediaById,
+  deleteMediaById,
 } from '../controllers/media-controller.js';
 import {authenticateToken} from '../../middlewares/authentication.js';
 import upload from '../../middlewares/upload.js';
@@ -17,23 +17,27 @@ const mediaRouter = express.Router();
 // Get all media and post new media
 mediaRouter
   .route('/')
-  .get(getMedia)
+  // Get all media items
+  .get(getAllMedia)
+  // Post new media item
   .post(
     authenticateToken,
     upload.single('file'),
     body('title').isLength({min: 3, max: 100}),
     // TODO: add required validation rules for other fields
-    postMedia,
+    postNewMedia,
   );
 
-// Get media by user (logged in)
 mediaRouter.route('/user').get(authenticateToken, getMediaByUser);
 
 // Delete, get and update media by id
 mediaRouter
   .route('/:id')
+  // Get media item by id
   .get(getMediaById)
+  // Update media item
   .put(updateMediaById)
+  // Delete media item
   .delete(deleteMediaById);
 
 export default mediaRouter;

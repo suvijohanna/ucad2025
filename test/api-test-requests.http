@@ -1,6 +1,7 @@
 # UCAD example API test http requests
 
-@token = {{token}}
+### Variables
+@token = eyJ1c2VyX2lkIjozMDgsInVzZXJuYW1lIjoic3V2aSIsInVzZXJfbGV2ZWxfaWQiOjEsImlhdCI6MTc2NDMzNjQ2NCwiZXhwIjoxNzY0NDIyODY0fQ
 
 ### Get server root
 GET http://localhost:3000/
@@ -32,7 +33,6 @@ content-type: application/json
 
 ### Add new media item including media file
 POST http://localhost:3000/api/media
-Authorization: Bearer {{token}}
 Content-Type: multipart/form-data; boundary=----Boundary
 
 ------Boundary
@@ -42,7 +42,7 @@ New cat image
 ------Boundary
 Content-Disposition: form-data; name="user_id"
 
-21
+2
 ------Boundary
 Content-Disposition: form-data; name="file"; filename="image.png"
 Content-Type: image/png
@@ -83,7 +83,7 @@ content-type: application/json
 {
   "username": "suvi",
   "password": "kalakana",
-  "email": "email@example.com"
+  "email": "suvi1@example.com"
 }
 
 ### Login
@@ -109,3 +109,23 @@ content-type: application/json
 
 ### Delete user
 DELETE http://localhost:3000/api/user/3
+
+#####################
+
+### GET likes by media
+GET http://localhost:3000/api/likes/media/1
+
+### GET likes by user
+GET http://localhost:3000/api/likes/user/2
+
+### POST add new like
+POST http://localhost:3000/api/likes
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "media_id": 1
+}
+
+### DELETE like
+DELETE http://localhost:3000/api/likes/3
