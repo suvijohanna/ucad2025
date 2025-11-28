@@ -50,3 +50,5 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 - DELETE `/api/likes/:id` – poistaa tykkäyksen
 
 ## Screenshots
+<img width="1645" height="946" alt="image" src="https://github.com/user-attachments/assets/abe7ea22-a6d2-44cf-b6d4-d60138a6c00c" />
+
