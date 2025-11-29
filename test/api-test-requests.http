@@ -54,7 +54,7 @@ content-type: application/json
 
 {
   "title": "New title",
-  "description": "Some new description",
+  "description": "Some new description"
 }
 
 ### Delete your own media item
