@@ -29,6 +29,9 @@ app.use('/api/likes', likeRouter);
 // Not found handler
 app.use(notFoundHandler);
 
+// Centralized error handler
+app.use(errorHandler);
+
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });

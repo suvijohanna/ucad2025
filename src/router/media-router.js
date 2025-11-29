@@ -7,14 +7,14 @@ import {
   updateMediaById,
   deleteMediaById,
 } from '../controllers/media-controller.js';
-import {authenticateToken} from '../../middlewares/authentication.js';
-import upload from '../../middlewares/upload.js';
+import {authenticateToken} from '../middlewares/authentication.js';
+import upload from '../middlewares/upload.js';
 import {body} from 'express-validator';
+import {validationErrors} from '../middlewares/error-handlers.js';
 
 // ALL media endpoints handled with express router
 const mediaRouter = express.Router();
 
-// Get all media and post new media
 mediaRouter
   .route('/')
   // Get all media items
@@ -23,21 +23,45 @@ mediaRouter
   .post(
     authenticateToken,
     upload.single('file'),
-    body('title').isLength({min: 3, max: 100}),
-    // TODO: add required validation rules for other fields
+    body('title')
+      .optional()
+      .trim()
+      .isLength({min: 3, max: 100})
+      .withMessage('Title must be 3–100 characters'),
+    body('description')
+      .optional()
+      .trim()
+      .isLength({max: 500})
+      .withMessage('Description max length 500'),
+    validationErrors,
     postNewMedia,
   );
 
+// Get logged in user's media items
 mediaRouter.route('/user').get(authenticateToken, getMediaByUser);
 
-// Delete, get and update media by id
 mediaRouter
   .route('/:id')
   // Get media item by id
   .get(getMediaById)
   // Update media item
-  .put(updateMediaById)
+  .put(
+    authenticateToken,
+    body('title')
+      .optional()
+      .trim()
+      .isLength({min: 3, max: 100})
+      .withMessage('Title must be 3–100 characters'),
+
+    body('description')
+      .optional()
+      .trim()
+      .isLength({max: 500})
+      .withMessage('Description max length 500'),
+    validationErrors,
+    updateMediaById,
+  )
   // Delete media item
-  .delete(deleteMediaById);
+  .delete(authenticateToken, deleteMediaById);
 
 export default mediaRouter;

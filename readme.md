@@ -1,9 +1,9 @@
 # Back-end 2: Express-sovelluskehys - Suvi Mynttinen
 
 Toteutettu backend Node.js/Expressillä, MVC-mallia ja MySQL-tietokantaa käyttäen.  
-Sovellus tarjoaa media- ja käyttäjätietoja, tiedostojen latauksen, tykkäys-toiminnallisuuden ja käyttäjäautentikoinnin.
+Sovellus tarjoaa media- ja käyttäjätietoja, tiedostojen latauksen, tykkäys-toiminnallisuuden, käyttäjäautentikoinnin sekä server-side validoinnin ja virheenkäsittelyn.
 
-Käytetty: Node.js, Express, MySQL (mysql2), Multer, JWT, REST API ja VSCode REST Client.
+Käytetty: Node.js, Express, MySQL (mysql2), Multer, JWT, express-validator, REST API ja VSCode REST Client.
 
 ## Database
 
@@ -23,6 +23,12 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 - Media- ja käyttäjätietojen päivitys/poisto sallitaan vain omistajalle.
 - Admin (user_level_id === 2) voi muokata/poistaa kaikkia media- ja käyttäjätietoja.
 - Tykkäysten lisääminen ja poistaminen sallittu vain kirjautuneelle käyttäjälle.
+
+## Validation & error handling
+
+- Käytössä **express-validator** kaikessa käyttäjän ja median tiedon luomisessa/päivittämisessä.
+- Virheet käsitellään keskitetyn **error-handler-middleware** avulla (`errorHandler`), ei suoraan `res.status().json()` -kutsuilla.
+- Validation errors ohjataan `validationErrors` middlewarelle, joka palauttaa selkeät virheviestit.
 
 ## API endpoints
 

@@ -11,16 +11,17 @@ import {
 /**
  * Return all media items from the database.
  *
- * @param {Object} req - HTTP request
- * @param {Object} res - HTTP response
+ * @param {Object} req - HTTP request.
+ * @param {Object} res - HTTP response.
+ * @param {Function} next - Express next middleware function.
  * @returns {void} Sends JSON array of all media items or 500 on error.
  */
-const getAllMedia = async (req, res) => {
+const getAllMedia = async (req, res, next) => {
   try {
     const media = await listAllMedia();
     res.json(media);
   } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+    next(error);
   }
 };
 
@@ -29,17 +30,22 @@ const getAllMedia = async (req, res) => {
  *
  * @param {Object} req - HTTP request object, expects `req.params.id`.
  * @param {Object} res - HTTP response object.
+ * @param {Function} next - Express next middleware function.
  * @returns {void} Sends JSON object of the media item or 404 if not found.
  */
 const getMediaById = async (req, res, next) => {
-  const media = await findMediaById(req.params.id);
-  if (media) {
-    // add full filepath to media item
-    media.filepath = `${req.protocol}://${req.headers.host}/${process.env.UPLOADS_PATH}/${media.filename}`;
-    res.json(media);
-  } else {
-    const error = new Error('Media item not found');
-    error.status = 404;
+  try {
+    const media = await findMediaById(req.params.id);
+    if (media) {
+      // add full filepath to media item
+      media.filepath = `${req.protocol}://${req.headers.host}/${process.env.UPLOADS_PATH}/${media.filename}`;
+      res.json(media);
+    } else {
+      const error = new Error('Media item not found');
+      error.status = 404;
+      next(error);
+    }
+  } catch (error) {
     next(error);
   }
 };
@@ -49,12 +55,15 @@ const getMediaById = async (req, res, next) => {
  *
  * @param {Object} req - HTTP request object, expects JWT middleware to set `req.user`.
  * @param {Object} res - HTTP response object.
+ * @param {Function} next - Express next middleware function.
  * @returns {void} Sends JSON array of media items for the user or 404 if none found.
  */
-const getMediaByUser = async (req, res) => {
-  const media = await findMediaByUserId(req.user.user_id);
-  if (media) {
+const getMediaByUser = async (req, res, next) => {
+  try {
+    const media = await findMediaByUserId(req.user.user_id);
     res.json(media);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -63,16 +72,17 @@ const getMediaByUser = async (req, res) => {
  *
  * @param {Object} req - HTTP request object, expects `req.body` with title, description, user_id and `req.file` for uploaded file.
  * @param {Object} res - HTTP response object.
+ * @param {Function} next - Express next middleware function.
  * @returns {void} Sends JSON message with new media ID or 400 on bad request.
  */
-const postNewMedia = async (req, res) => {
+const postNewMedia = async (req, res, next) => {
   // check if file is rejected by multer
   if (!req.file) {
     return res.status(400).json({error: 'Invalid or missing file'});
   }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array());
+    return res.status(400).json({errors: errors.array()});
   }
   try {
     const {title, description = ''} = req.body;
@@ -89,7 +99,7 @@ const postNewMedia = async (req, res) => {
     });
     res.status(201).json({message: 'New media item added.', ...result});
   } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+    next(error);
   }
 };
 
@@ -97,10 +107,12 @@ const postNewMedia = async (req, res) => {
  * Modifies media item in the database based on value on media_id
  * Only the file owner or admin can update the media
  *
- * @param {Object} req - HTTP request, expects req.params.id and req.body
- * @param {Object} res - HTTP response
+ * @param {Object} req - HTTP request, expects req.params.id and req.body.
+ * @param {Object} res - HTTP response.
+ * @param {Function} next - Express next middleware function.
+ * @returns {void} Sends JSON with updated media or 403/404 if unauthorized/not found.
  */
-const updateMediaById = async (req, res) => {
+const updateMediaById = async (req, res, next) => {
   try {
     const mediaId = parseInt(req.params.id);
     const userId = req.user.user_id;
@@ -113,7 +125,7 @@ const updateMediaById = async (req, res) => {
     }
     res.json({message: 'Media updated', item: updatedMedia});
   } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+    next(error);
   }
 };
 
@@ -121,10 +133,12 @@ const updateMediaById = async (req, res) => {
  * Deletes media item from the database based on value on media_id
  * Only the file owner or admin can delete the media
  *
- * @param {Object} req - HTTP request, expects req.params.id
- * @param {Object} res - HTTP response
+ * @param {Object} req - HTTP request, expects req.params.id.
+ * @param {Object} res - HTTP response.
+ * @param {Function} next - Express next middleware function.
+ * @returns {void} Sends JSON message of deletion or 403/404 if unauthorized/not found.
  */
-const deleteMediaById = async (req, res) => {
+const deleteMediaById = async (req, res, next) => {
   try {
     const mediaId = parseInt(req.params.id);
     const userId = req.user.user_id;
@@ -137,7 +151,7 @@ const deleteMediaById = async (req, res) => {
     }
     res.json({message: 'Media deleted'});
   } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+    next(error);
   }
 };
 

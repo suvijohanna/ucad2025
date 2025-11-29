@@ -16,27 +16,33 @@ import {
  *
  * @param {Object} req - HTTP request, expects {username, password} in body
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON response with user info and token or 401
  */
-const postLogin = async (req, res) => {
-  console.log('postLogin', req.body);
-  const user = await selectUserByUsername(req.body.username);
-  const passwordMatch = user && user.password === req.body.password;
-  if (!passwordMatch) {
-    return res.sendStatus(401);
+const postLogin = async (req, res, next) => {
+  try {
+    const user = await selectUserByUsername(req.body.username);
+    const passwordMatch = user && user.password === req.body.password;
+    if (!passwordMatch) {
+      const error = new Error('Invalid username or password');
+      error.status = 401;
+      throw error;
+    }
+    // Do not include password in response
+    delete user.password;
+    // Create JWT token
+    const payload = {
+      user_id: user.user_id,
+      username: user.username,
+      user_level_id: user.user_level_id,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+    res.json({...payload, token});
+  } catch (err) {
+    next(err);
   }
-  // Do not include password in response
-  delete user.password;
-  // Create JWT token
-  const payload = {
-    user_id: user.user_id,
-    username: user.username,
-    user_level_id: user.user_level_id,
-  };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-  res.json({...payload, token});
 };
 
 /**
@@ -44,12 +50,19 @@ const postLogin = async (req, res) => {
  *
  * @param {Object} req - HTTP request, expects JWT middleware to set req.user
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON response with user info if token is valid
  */
-const getMe = async (req, res) => {
-  console.log('getMe', req.user);
-  if (req.user) {
+const getMe = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      const error = new Error('No authenticated user');
+      error.status = 401;
+      throw error;
+    }
     res.json({message: 'token ok', user: req.user});
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -58,14 +71,15 @@ const getMe = async (req, res) => {
  *
  * @param {Object} req - HTTP request
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON array of all users
  */
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const users = await findAllUsers();
     res.json(users);
-  } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -74,17 +88,20 @@ const getAllUsers = async (req, res) => {
  *
  * @param {Object} req - HTTP request, expects req.params.id
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON object of the user or 404 if not found
  */
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await findUserById(req.params.id);
     if (!user) {
-      return res.status(404).json({message: 'User not found'});
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
     }
     res.json(user);
-  } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -93,17 +110,32 @@ const getUserById = async (req, res) => {
  *
  * @param {Object} req - HTTP request, expects user data in req.body
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON with created user_id or 400 on error
  */
-const postNewUser = async (req, res) => {
-  const newUser = req.body;
-  // regular user level by default
-  newUser.user_level_id = 1;
-  const result = await addUser(newUser);
-  if (result.user_id) {
-    return res.json({message: 'User created.', user_id: result.user_id});
-  } else {
-    return res.status(400).json({});
+const postNewUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(
+        errors
+          .array()
+          .map((e) => `${e.path}: ${e.msg}`)
+          .join(', '),
+      );
+      error.status = 400;
+      throw error;
+    }
+    const newUser = {...req.body, user_level_id: 1};
+    const result = await addUser(newUser);
+    if (!result || typeof result !== 'number') {
+      const error = new Error('User creation failed');
+      error.status = 400;
+      throw error;
+    }
+    res.status(201).json({message: 'User created', user_id: result});
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -113,22 +145,27 @@ const postNewUser = async (req, res) => {
  *
  * @param {Object} req - HTTP request, expects req.params.id and req.body
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON with updated item or 403/404 if unauthorized/not found
  */
-const updateUserById = async (req, res) => {
+const updateUserById = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const isAdmin = req.user.user_level_id === 2;
     if (!isAdmin && userId !== req.user.user_id) {
-      return res
-        .status(403)
-        .json({message: 'Forbidden: cannot edit other users'});
+      const error = new Error('Forbidden: cannot edit other users');
+      error.status = 403;
+      throw error;
     }
     const updatedUser = await updateUser(userId, req.body);
-    if (!updatedUser) return res.status(404).json({message: 'User not found'});
+    if (!updatedUser) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
     res.json({message: 'User updated', item: updatedUser});
-  } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -138,24 +175,26 @@ const updateUserById = async (req, res) => {
  *
  * @param {Object} req - HTTP request, expects req.params.id
  * @param {Object} res - HTTP response
+ * @param {Function} next - Express next middleware function for error handling
  * @returns {void} Sends JSON message of deletion or 403/404 if unauthorized/not found
  */
-const deleteUserById = async (req, res) => {
+const deleteUserById = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
-    // Only allow user to delete their own account
     if (userId !== req.user.user_id) {
-      return res
-        .status(403)
-        .json({message: 'Forbidden: cannot delete other users'});
+      const error = new Error('Forbidden: cannot delete other users');
+      error.status = 403;
+      throw error;
     }
     const success = await deleteUser(userId);
     if (!success) {
-      return res.status(404).json({message: 'User not found'});
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
     }
     res.json({message: 'User deleted'});
-  } catch (error) {
-    res.status(500).json({message: 'Database error', error});
+  } catch (err) {
+    next(err);
   }
 };
 
