@@ -56,3 +56,11 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 - DELETE `/api/likes/:id` – poistaa tykkäyksen
 
 ## Screenshots
+### GET /api/media
+![Get all media]<img width="1859" height="946" alt="image" src="https://github.com/user-attachments/assets/8a806450-2c3f-4660-90cd-f65ac9c64c32" />
+### GET /api/media/user
+![Get user's media items]<img width="1859" height="947" alt="image" src="https://github.com/user-attachments/assets/65a009e7-0382-4727-a577-0d6584511155" />
+### PUT /api/media/9590
+![Update existing item (by another user)]<img width="1855" height="943" alt="image" src="https://github.com/user-attachments/assets/87bce8f8-7b4e-493d-9e98-0c8b38a7225f" />
+
+
