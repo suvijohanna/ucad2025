@@ -64,6 +64,10 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 
 ## Screenshots
 
-### GET /api/media
+### POST /api/user
+![Add new user]<img width="1858" height="947" alt="image" src="https://github.com/user-attachments/assets/08a68332-cb3c-40e9-8615-777624bc70c5" />
 
-![Get all media]
+### POST /api/auth/login
+![Login with new user]<img width="1858" height="946" alt="image" src="https://github.com/user-attachments/assets/8fac257a-98ca-4b51-b303-87274c90735f" />
+
+
