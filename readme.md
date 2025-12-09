@@ -62,12 +62,18 @@ Yhteys database.js-tiedoston kautta (mysql2/promise)
 - POST `/api/likes` – lisää uusi tykkäys (user_id + media_id)
 - DELETE `/api/likes/:id` – poistaa tykkäyksen
 
+## Implementation Report
+
+This backend implements a RESTful API with focus on authentication, authorization, validation, and security.
+
+- **Authentication & Authorization:** JWT-based, passwords hashed with bcryptjs. Only owners or admins can modify resources.
+- **Media Management:** File uploads via Multer, title/description validated using express-validator.
+- **Likes System:** Users can like/unlike media items.
+- **Security Enhancements:** Helmet for HTTP headers, centralized error handling, password hashing.
+- **API Documentation:** Generated using apidoc, served at `/docs`.
+
 ## Screenshots
 
 ### POST /api/user
-![Add new user]<img width="1858" height="947" alt="image" src="https://github.com/user-attachments/assets/08a68332-cb3c-40e9-8615-777624bc70c5" />
 
-### POST /api/auth/login
-![Login with new user]<img width="1858" height="946" alt="image" src="https://github.com/user-attachments/assets/8fac257a-98ca-4b51-b303-87274c90735f" />
-
-
+![Add new user]

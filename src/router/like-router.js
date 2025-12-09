@@ -11,8 +11,15 @@ import {validationErrors} from '../middlewares/error-handlers.js';
 const likeRouter = express.Router();
 
 /**
- * Get likes for a media item
- * GET /api/likes/media/:id
+ * @api {get} /api/likes/media/:id Get likes for a media item
+ * @apiName GetMediaLikes
+ * @apiGroup Likes
+ *
+ * @apiParam {Number} id Media unique ID
+ *
+ * @apiSuccess {Object[]} likes Array of likes for the media
+ * @apiSuccess {Number} likes.user_id User ID who liked
+ * @apiSuccess {Number} likes.media_id Media ID
  */
 likeRouter.get(
   '/media/:id',
@@ -22,8 +29,15 @@ likeRouter.get(
 );
 
 /**
- * Get likes by a user
- * GET /api/likes/user/:id
+ * @api {get} /api/likes/user/:id Get likes by a user
+ * @apiName GetUserLikes
+ * @apiGroup Likes
+ *
+ * @apiParam {Number} id User unique ID
+ *
+ * @apiSuccess {Object[]} likes Array of likes by the user
+ * @apiSuccess {Number} likes.user_id User ID
+ * @apiSuccess {Number} likes.media_id Media ID liked
  */
 likeRouter.get(
   '/user/:id',
@@ -33,8 +47,15 @@ likeRouter.get(
 );
 
 /**
- * Add a like
- * POST /api/likes
+ * @api {post} /api/likes Add a new like
+ * @apiName PostLike
+ * @apiGroup Likes
+ *
+ * @apiBody {Number} user_id User ID
+ * @apiBody {Number} media_id Media ID
+ *
+ * @apiSuccess {Object} item Created like object
+ * @apiSuccess {String} message Success message
  */
 likeRouter.post(
   '/',
@@ -47,8 +68,13 @@ likeRouter.post(
 );
 
 /**
- * Delete a like
- * DELETE /api/likes/:id
+ * @api {delete} /api/likes/:id Delete a like
+ * @apiName DeleteLike
+ * @apiGroup Likes
+ *
+ * @apiParam {Number} id Like unique ID
+ *
+ * @apiSuccess {String} message Success message
  */
 likeRouter.delete(
   '/:id',
