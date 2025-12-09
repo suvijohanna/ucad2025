@@ -74,6 +74,6 @@ This backend implements a RESTful API with focus on authentication, authorizatio
 
 ## Screenshots
 
-### POST /api/user
+### API example at localhost
+<img width="1919" height="965" alt="image" src="https://github.com/user-attachments/assets/70b69555-4806-4779-9561-9591c57f33c4" />
 
-![Add new user]
