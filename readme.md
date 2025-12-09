@@ -1,6 +1,41 @@
 # Back-end 2: Express-sovelluskehys - Suvi Mynttinen
 
-Toteutettu backend Node.js/Expressillä, joka tarjoaa media- ja käyttäjätietoja mock-datan avulla. Käytössä staattiset mediatiedostot ja dynaaminen HTML-sivu Pugilla.
+Toteutettu backend Node.js/Expressillä, MVC-mallia ja MySQL-tietokantaa käyttäen.  
+Sovellus tarjoaa media- ja käyttäjätietoja, tiedostojen latauksen, tykkäys-toiminnallisuuden, käyttäjäautentikoinnin, server-side validoinnin, virheenkäsittelyn sekä perustason parannuksia web-sovellusturvallisuuteen.
+
+Käytetty: Node.js, Express, MySQL (mysql2), Multer, JWT, bcryptjs, helmet, express-validator, REST API ja VSCode REST Client.
+
+## Database
+
+Käytössä MySQL-tietokanta: MediaSharingApp
+
+Taulut: Users, MediaItems, Comments, Likes, Ratings, Tags, MediaItemTags, UserLevels
+
+Yhteys database.js-tiedoston kautta (mysql2/promise)
+
+## Authentication
+
+- POST `/api/auth/login` – kirjautuminen käyttäjätunnuksella ja salasanalla, palauttaa JWT-tokenin
+  - Salasanat verrataan **bcrypt-hashiin** tietokannasta
+- GET `/api/auth/me` – palauttaa kirjautuneen käyttäjän tiedot (JWT:n tarkistus req.user)
+
+**Authorization rules**:
+
+- Media- ja käyttäjätietojen päivitys/poisto sallitaan vain omistajalle.
+- Admin (user_level_id === 2) voi muokata/poistaa kaikkia media- ja käyttäjätietoja.
+- Tykkäysten lisääminen ja poistaminen sallittu vain kirjautuneelle käyttäjälle.
+
+**Security enhancements**:
+
+- **Helmet** käytössä: lisää ja konfiguroi HTTP-headerit suojaten sovellusta mm. XSS:ltä ja clickjackingilta.
+- Salasanat hashataan **bcryptjs**:llä ennen tallennusta.
+- Virheenkäsittely keskitetty `errorHandler`-middlewareen.
+
+## Validation & error handling
+
+- Käytössä **express-validator** kaikessa käyttäjän ja median tiedon luomisessa/päivittämisessä.
+- Virheet käsitellään keskitetyn **error-handler-middleware** avulla (`errorHandler`), ei suoraan `res.status().json()` -kutsuilla.
+- Validation errors ohjataan `validationErrors` middlewarelle, joka palauttaa selkeät virheviestit.
 
 ## API endpoints
 
@@ -8,14 +43,31 @@ Toteutettu backend Node.js/Expressillä, joka tarjoaa media- ja käyttäjätieto
 
 - GET `/api/media` – kaikki media-items
 - GET `/api/media/:id` – media-id:llä
-- POST `/api/media` – lisää uusi media
-- PUT `/api/media/:id` – päivitä media
-- DELETE `/api/media/:id` – poista media
+- POST `/api/media` – lisää uusi media (Multer käytössä tiedoston lataamiseen)
+- PUT `/api/media/:id` – päivitä media (vain omistaja tai admin)
+- DELETE `/api/media/:id` – poista media (vain omistaja tai admin)
 
 ### Users
 
 - GET `/api/user` – kaikki käyttäjät
 - GET `/api/user/:id` – käyttäjä-id:llä
-- POST `/api/user` – lisää käyttäjä
-- PUT `/api/user/:id` – päivitä käyttäjä
-- DELETE `/api/user/:id` – poista käyttäjä
+- POST `/api/user` – lisää käyttäjä (salasana hashataan bcryptillä)
+- PUT `/api/user/:id` – päivitä käyttäjä (vain oma käyttäjä tai admin)
+- DELETE `/api/user/:id` – poista käyttäjä (vain oma käyttäjä tai admin)
+
+### Likes
+
+- GET `/api/likes/media/:id` – listaa tykkäykset tietylle media-itemille
+- GET `/api/likes/user/:id` – listaa käyttäjän tykkäykset
+- POST `/api/likes` – lisää uusi tykkäys (user_id + media_id)
+- DELETE `/api/likes/:id` – poistaa tykkäyksen
+
+## Screenshots
+
+### POST /api/user
+![Add new user]<img width="1858" height="947" alt="image" src="https://github.com/user-attachments/assets/08a68332-cb3c-40e9-8615-777624bc70c5" />
+
+### POST /api/auth/login
+![Login with new user]<img width="1858" height="946" alt="image" src="https://github.com/user-attachments/assets/8fac257a-98ca-4b51-b303-87274c90735f" />
+
+
