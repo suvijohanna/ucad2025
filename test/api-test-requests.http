@@ -1,7 +1,7 @@
 # UCAD example API test http requests
 
 ### Variables
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMDgsInVzZXJuYW1lIjoic3V2aSIsInVzZXJfbGV2ZWxfaWQiOjEsImlhdCI6MTc2NDQzMDUwNCwiZXhwIjoxNzY0NTE2OTA0fQ.DwBOc6a2U0-bd-dKWAIMyeI41MgrjAat9PTqC2Km_Dk
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMTAsInVzZXJuYW1lIjoic3V2aTIiLCJ1c2VyX2xldmVsX2lkIjoxLCJpYXQiOjE3NjUzMDIwMjEsImV4cCI6MTc2NTM4ODQyMX0.91r2sXF1TBG9J_ACpYBhs1nvdZZ4JV4gf_tqAuqsA64
 
 ### Get server root
 GET http://localhost:3000/
@@ -76,9 +76,9 @@ POST http://localhost:3000/api/user
 content-type: application/json
 
 {
-  "username": "suvi",
-  "password": "kalakana",
-  "email": "suvi1@example.com"
+  "username": "suvi2",
+  "password": "kalakana2",
+  "email": "suvi2@example.com"
 }
 
 ### Login
@@ -86,8 +86,8 @@ POST http://localhost:3000/api/auth/login
 content-type: application/json
 
 {
-  "username": "suvi",
-  "password": "kalakana"
+  "username": "suvi2",
+  "password": "kalakana2"
 }
 
 ### Auth GET me
