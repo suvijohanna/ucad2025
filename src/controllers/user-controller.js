@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import {validationResult} from 'express-validator';
+import bcrypt from 'bcryptjs';
 import {
   findAllUsers,
   findUserById,
