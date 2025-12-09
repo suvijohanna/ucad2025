@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import userRouter from './router/user-router.js';
 import mediaRouter from './router/media-router.js';
 import likeRouter from './router/like-router.js';
@@ -11,10 +12,11 @@ const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 const app = express();
 
-// console.log(process.env);
-
 // Parse json from request body
 app.use(express.json());
+
+// Security headers
+app.use(helmet());
 
 // Serve static files
 app.use('/', express.static('public'));

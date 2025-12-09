@@ -13,17 +13,22 @@ import {
 
 /**
  * Handle user login.
- * Verifies username and password, returns JWT token if valid.
+ * Looks up user by username, verifies password using bcrypt,
+ * and returns a signed JWT token if authentication succeeds.
  *
- * @param {Object} req - HTTP request, expects {username, password} in body
- * @param {Object} res - HTTP response
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.username - Username attempting to log in
+ * @param {string} req.body.password - Plaintext password for authentication
+ * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function for error handling
- * @returns {void} Sends JSON response with user info and token or 401
+ * @returns {void} Sends JSON containing user info and JWT token, or 401 if credentials are invalid
  */
 const postLogin = async (req, res, next) => {
   try {
     const user = await selectUserByUsername(req.body.username);
-    const passwordMatch = user && user.password === req.body.password;
+    const passwordMatch =
+      user && (await bcrypt.compare(req.body.password, user.password));
     if (!passwordMatch) {
       const error = new Error('Invalid username or password');
       error.status = 401;
@@ -107,12 +112,16 @@ const getUserById = async (req, res, next) => {
 };
 
 /**
- * Adds a new user item to the database
+ * Creates a new user in the database.
  *
- * @param {Object} req - HTTP request, expects user data in req.body
+ * - Validates input using express-validator
+ * - Hashes the user's password using bcrypt before storing
+ * - Assigns default user_level_id = 1
+ *
+ * @param {Object} req - HTTP request, expects {username, password, email} in body
  * @param {Object} res - HTTP response
  * @param {Function} next - Express next middleware function for error handling
- * @returns {void} Sends JSON with created user_id or 400 on error
+ * @returns {void} Sends JSON containing created user_id, or forwards error
  */
 const postNewUser = async (req, res, next) => {
   try {
@@ -127,7 +136,8 @@ const postNewUser = async (req, res, next) => {
       error.status = 400;
       throw error;
     }
-    const newUser = {...req.body, user_level_id: 1};
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const newUser = {...req.body, password: hashedPassword, user_level_id: 1};
     const result = await addUser(newUser);
     if (!result || typeof result !== 'number') {
       const error = new Error('User creation failed');
